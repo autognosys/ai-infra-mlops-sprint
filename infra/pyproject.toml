@@ -1,0 +1,8 @@
+[project]
+name = "ai-infra-mlops-sprint-infra"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "pulumi>=3.140.0",
+    "pulumi-azure-native>=2.70.0",
+]

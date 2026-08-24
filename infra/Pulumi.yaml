@@ -1,0 +1,7 @@
+name: ai-infra-mlops-sprint
+runtime:
+  name: python
+  options:
+    toolchain: uv
+    virtualenv: .venv
+description: 6-week Azure GPU/MLOps learning sprint infra — one reused stack, disposable per session

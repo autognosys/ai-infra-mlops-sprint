@@ -1,0 +1,16 @@
+# Pulumi
+infra/.venv/
+infra/Pulumi.*.yaml.bak
+infra/.pulumi/
+
+# Python
+__pycache__/
+*.pyc
+
+# Local secrets / env
+.env
+*.pem
+*.key
+
+# OS
+.DS_Store
