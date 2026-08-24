@@ -1,0 +1,4 @@
+config:
+  azure-native:location: centralindia
+  ai-infra-mlops-sprint:weeklyBudgetUsd: "100"
+  ai-infra-mlops-sprint:alertEmail: sriram@autognosys.net

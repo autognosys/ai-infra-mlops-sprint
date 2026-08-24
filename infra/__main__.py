@@ -51,7 +51,7 @@ budget = consumption.Budget(
     amount=weekly_budget_usd,
     time_grain=consumption.TimeGrainType.MONTHLY,  # Consumption Budget API has no WEEKLY grain; monitored manually per-week via cost checks
     time_period=consumption.BudgetTimePeriodArgs(
-        start_date="2026-08-25T00:00:00Z",
+        start_date="2026-09-01T00:00:00Z",
     ),
     category=consumption.CategoryType.COST,
     notifications={
