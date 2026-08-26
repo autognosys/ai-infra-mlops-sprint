@@ -82,4 +82,74 @@ budget = consumption.Budget(
 pulumi.export("resource_group_name", resource_group.name)
 pulumi.export("weekly_budget_usd", weekly_budget_usd)
 
-# --- Day 2 adds here: NC-series spot GPU VM -------------------------------
+# ============================================================================
+# GCP — Week 1 Day 2: preemptible T4 GPU VM (autognosys-net project)
+# ============================================================================
+# Azure NC-series quota was denied on this subscription (sponsorship/startup
+# subscriptions don't get GPU quota by default — see docs/learning-sprint/
+# week-01-gpu-fundamentals.md for the full story). autognosys-net already has
+# billing history and GPU quota (NVIDIA_T4_GPUS: 1) in us-central1, so the
+# GPU exercises for this sprint run there instead. The Azure resource group +
+# budget above stay as-is and get used in later weeks (Azure ML, AKS control
+# plane, observability) that don't need this specific quota.
+
+import pulumi_gcp as gcp
+
+gcp_config = pulumi.Config("gcp")
+gcp_project = gcp_config.require("project")
+gcp_zone = gcp_config.get("zone") or "us-central1-a"
+
+# Firewall: allow SSH only, scoped to instances tagged "gpu-sprint" —
+# nothing else in the project is affected.
+gpu_sprint_ssh_firewall = gcp.compute.Firewall(
+    "gpu-sprint-allow-ssh",
+    project=gcp_project,
+    network="default",
+    allows=[gcp.compute.FirewallAllowArgs(protocol="tcp", ports=["22"])],
+    source_ranges=["0.0.0.0/0"],  # tighten to your IP if you want it stricter
+    target_tags=["gpu-sprint"],
+)
+
+# Preemptible n1-standard-4 + 1x T4, using the Deep Learning VM image
+# (CUDA + PyTorch preinstalled) so Day 3's "real inference" step doesn't
+# burn a session on driver/toolkit setup.
+gpu_vm = gcp.compute.Instance(
+    "gpu-sprint-vm",
+    project=gcp_project,
+    zone=gcp_zone,
+    machine_type="n1-standard-4",
+    tags=["gpu-sprint"],
+    boot_disk=gcp.compute.InstanceBootDiskArgs(
+        initialize_params=gcp.compute.InstanceBootDiskInitializeParamsArgs(
+            image="projects/deeplearning-platform-release/global/images/family/pytorch-2-9-cu129-ubuntu-2204-nvidia-580",
+            size=100,
+        ),
+    ),
+    guest_accelerators=[
+        gcp.compute.InstanceGuestAcceleratorArgs(
+            type="nvidia-tesla-t4",
+            count=1,
+        ),
+    ],
+    # GPUs require manual host maintenance handling, and preemptible
+    # instances can't auto-restart — both required for this SKU combo.
+    scheduling=gcp.compute.InstanceSchedulingArgs(
+        preemptible=True,
+        automatic_restart=False,
+        on_host_maintenance="TERMINATE",
+    ),
+    network_interfaces=[
+        gcp.compute.InstanceNetworkInterfaceArgs(
+            network="default",
+            access_configs=[gcp.compute.InstanceNetworkInterfaceAccessConfigArgs()],  # ephemeral external IP
+        ),
+    ],
+    metadata={
+        "install-nvidia-driver": "True",  # DLVM image auto-installs/verifies driver on boot
+    },
+)
+
+pulumi.export("gpu_vm_name", gpu_vm.name)
+pulumi.export("gpu_vm_external_ip", gpu_vm.network_interfaces[0].access_configs[0].nat_ip)
+
+# --- Day 3 adds here: run real inference on the VM (manual/CLI, not IaC) ---

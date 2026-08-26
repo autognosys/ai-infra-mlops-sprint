@@ -1,4 +1,6 @@
 config:
-  azure-native:location: centralindia
+  azure-native:location: southeastasia
   ai-infra-mlops-sprint:weeklyBudgetUsd: "100"
   ai-infra-mlops-sprint:alertEmail: sriram@autognosys.net
+  gcp:project: autognosys-net
+  gcp:zone: us-central1-a
