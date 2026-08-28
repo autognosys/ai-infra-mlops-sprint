@@ -31,7 +31,7 @@ infra/                           # Pulumi (Python) IaC, one reused stack per wee
 
 | Week | Focus | Status | Artifact |
 |---|---|---|---|
-| 1 | GPU fundamentals + IaC discipline | ⬜ | |
+| 1 | GPU fundamentals + IaC discipline | ✅ | [week-01](docs/learning-sprint/week-01-gpu-fundamentals.md) |
 | 2 | GPU workloads on Kubernetes (AKS) | ⬜ | |
 | 3 | MLOps pipeline (Azure ML endpoints) | ⬜ | |
 | 4 | Observability for AI workloads | ⬜ | |
@@ -45,3 +45,4 @@ Status legend: ⬜ not started · 🟨 in progress · ✅ done
 - **IaC:** Pulumi (Python), `uv` for dependency management
 - **Discipline:** always `pulumi preview` before `pulumi up`; `pulumi destroy` at the end of every session
 - **Cloud:** Azure (this sprint) — provisioning targets AKS, Azure ML, and standalone GPU VMs across the six weeks
+

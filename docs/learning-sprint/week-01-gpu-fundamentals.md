@@ -40,16 +40,27 @@ This ended up being a genuinely useful lesson in multi-cloud pragmatism, cloud-s
 - **Output:** confirmed working inference pipeline, with a genuine "prompt formatting matters" lesson learned along the way
 
 ### Day 4 (Thu) — Cost + monitoring pass
-- Check actual spend in Azure Cost Management vs. budget alert thresholds
-- Note $/hour for the VM size chosen
-- If time allows: compare a second GPU SKU
-- **Output:** Small cost table (SKU, $/hr, VRAM, best use)
+- Checked actual spend across all three providers touched this week:
+
+| Resource | Provider | Cost |
+|---|---|---|
+| Resource group + budget alert | Azure | ₹0 / $0 |
+| Failed GPU VM attempts (quota-blocked, never provisioned) | GCP | $0 |
+| RTX 3090, ~20 min session (real inference) | RunPod | ~$0.18 |
+
+- Azure budget alert confirmed live via `az consumption budget list` (`currentSpend: 0.0`)
+- RunPod balance: started ~$15 ($10 added + $5 signup bonus), $14.82 remaining after Day 2-3 — real GPU inference cost under 20 cents
+- **Takeaway:** the actual GPU compute cost for a full session (spin up, load model, run inference, tear down) is trivial — the real cost of this week was *time* spent navigating quota bureaucracy across two cloud providers, not compute spend. Worth calling out explicitly in the final writeup.
+- **Output:** cost table above, ready to reuse in the final writeup's cost breakdown section
 
 ### Day 5 (Fri) — Harden teardown + document IaC
-- One-command teardown (`pulumi destroy -y`, aliased/scripted)
-- Confirm no orphaned resources (disks, IPs) survive
-- Clean up Pulumi code, add comments/README to the stack
-- **Output:** Repo-ready Pulumi code for Week 1
+- Verified zero orphaned resources across all three providers touched this week:
+  - Azure: only the RG + budget alert exist, nothing else in `ai-infra-mlops-sprint-rg`
+  - GCP: `gcloud compute instances/disks/addresses list` confirmed no leftovers from the quota-blocked VM attempts — the failed `pulumi up` never got far enough to create anything billable
+  - RunPod: pod terminated after Day 3, confirmed via dashboard
+- Added a `sprint-down` shell alias (`pulumi destroy -y` from `infra/`) for fast teardown in future weeks once real spend is in play
+- Marked the dead GCP VM code in `__main__.py` clearly as blocked-on-quota, not broken, so it's not confusing to come back to later
+- **Output:** clean teardown verification across Azure/GCP/RunPod; repo-ready Pulumi code for Week 1
 
 ## Weekend consolidation
 
