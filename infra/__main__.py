@@ -113,43 +113,124 @@ gpu_sprint_ssh_firewall = gcp.compute.Firewall(
 # Preemptible n1-standard-4 + 1x T4, using the Deep Learning VM image
 # (CUDA + PyTorch preinstalled) so Day 3's "real inference" step doesn't
 # burn a session on driver/toolkit setup.
-gpu_vm = gcp.compute.Instance(
-    "gpu-sprint-vm",
-    project=gcp_project,
-    zone=gcp_zone,
-    machine_type="n1-standard-4",
-    tags=["gpu-sprint"],
-    boot_disk=gcp.compute.InstanceBootDiskArgs(
-        initialize_params=gcp.compute.InstanceBootDiskInitializeParamsArgs(
-            image="projects/deeplearning-platform-release/global/images/family/pytorch-2-9-cu129-ubuntu-2204-nvidia-580",
-            size=100,
-        ),
+#gpu_vm = gcp.compute.Instance(
+#    "gpu-sprint-vm",
+#    project=gcp_project,
+#    zone=gcp_zone,
+#    machine_type="n1-standard-4",
+#    tags=["gpu-sprint"],
+#    boot_disk=gcp.compute.InstanceBootDiskArgs(
+#        initialize_params=gcp.compute.InstanceBootDiskInitializeParamsArgs(
+#            image="projects/deeplearning-platform-release/global/images/family/pytorch-2-9-cu129-ubuntu-2204-nvidia-580",
+#            size=100,
+#        ),
+#    ),
+#    guest_accelerators=[
+#        gcp.compute.InstanceGuestAcceleratorArgs(
+#            type="nvidia-tesla-t4",
+#            count=1,
+#        ),
+#   ],
+# GPUs require manual host maintenance handling, and preemptible
+# instances can't auto-restart — both required for this SKU combo.
+#    scheduling=gcp.compute.InstanceSchedulingArgs(
+#        preemptible=True,
+#        automatic_restart=False,
+#        on_host_maintenance="TERMINATE",
+#    ),
+#    network_interfaces=[
+#        gcp.compute.InstanceNetworkInterfaceArgs(
+#            network="default",
+#            access_configs=[gcp.compute.InstanceNetworkInterfaceAccessConfigArgs()],  # ephemeral external IP
+#        ),
+#    ],
+#    metadata={
+#        "install-nvidia-driver": "True",  # DLVM image auto-installs/verifies driver on boot
+#    },
+#)
+
+#pulumi.export("gpu_vm_name", gpu_vm.name)
+#pulumi.export("gpu_vm_external_ip", gpu_vm.network_interfaces[0].access_configs[0].nat_ip)
+
+# ============================================================================
+# Week 2, Day 1 — AKS cluster with CPU-only node pool
+# ============================================================================
+# No GPU quota needed here — standard CPU VM sizes aren't gated the way the
+# NC-series GPU VMs were. This is real, meaningful Azure spend (the original
+# point of this sprint), separate from the GPU-scheduling concepts (handled
+# via a compact RunPod/k3s exercise on Day 2 instead of a full AKS GPU node
+# pool, which would hit the same NC-series quota wall).
+
+from pulumi_azure_native import containerservice, authorization
+
+aks_cluster = containerservice.ManagedCluster(
+    "ai-infra-sprint-aks",
+    resource_group_name=resource_group.name,
+    resource_name_="ai-infra-sprint-aks",
+    dns_prefix="ai-infra-sprint",
+    identity=containerservice.ManagedClusterIdentityArgs(
+        type=containerservice.ResourceIdentityType.SYSTEM_ASSIGNED,
     ),
-    guest_accelerators=[
-        gcp.compute.InstanceGuestAcceleratorArgs(
-            type="nvidia-tesla-t4",
-            count=1,
+    agent_pool_profiles=[
+        containerservice.ManagedClusterAgentPoolProfileArgs(
+            name="cpupool",
+            count=2,
+            vm_size="Standard_D2s_v5",  # 2 vCPU, 8GB RAM — no quota gating
+            os_type=containerservice.OSType.LINUX,
+            mode=containerservice.AgentPoolMode.SYSTEM,
+            type=containerservice.AgentPoolType.VIRTUAL_MACHINE_SCALE_SETS,
         ),
     ],
-    # GPUs require manual host maintenance handling, and preemptible
-    # instances can't auto-restart — both required for this SKU combo.
-    scheduling=gcp.compute.InstanceSchedulingArgs(
-        preemptible=True,
-        automatic_restart=False,
-        on_host_maintenance="TERMINATE",
-    ),
-    network_interfaces=[
-        gcp.compute.InstanceNetworkInterfaceArgs(
-            network="default",
-            access_configs=[gcp.compute.InstanceNetworkInterfaceAccessConfigArgs()],  # ephemeral external IP
-        ),
-    ],
-    metadata={
-        "install-nvidia-driver": "True",  # DLVM image auto-installs/verifies driver on boot
-    },
 )
 
-pulumi.export("gpu_vm_name", gpu_vm.name)
-pulumi.export("gpu_vm_external_ip", gpu_vm.network_interfaces[0].access_configs[0].nat_ip)
+# Separate user node pool, sized for the inference workload — keeping the
+# original "cpupool" as a small system pool (AKS won't let you resize an
+# existing pool's VM size in place; adding a new pool is the standard
+# pattern for workload-specific sizing).
+inference_node_pool = containerservice.AgentPool(
+    "inference-userpool",
+    resource_group_name=resource_group.name,
+    resource_name_=aks_cluster.name,
+    agent_pool_name="userpool",
+    count=1,
+    vm_size="Standard_D4s_v5",  # 4 vCPU, 16GB RAM
+    os_type=containerservice.OSType.LINUX,
+    mode=containerservice.AgentPoolMode.USER,
+    type=containerservice.AgentPoolType.VIRTUAL_MACHINE_SCALE_SETS,
+)
 
-# --- Day 3 adds here: run real inference on the VM (manual/CLI, not IaC) ---
+pulumi.export("aks_cluster_name", aks_cluster.name)
+pulumi.export(
+    "aks_get_credentials_cmd",
+    pulumi.Output.concat(
+        "az aks get-credentials --resource-group ", resource_group.name,
+        " --name ", aks_cluster.name,
+    ),
+)
+
+# ============================================================================
+# Week 2, Day 1 (cont.) — Azure Container Registry, attached to AKS
+# ============================================================================
+from pulumi_azure_native import containerregistry
+
+acr = containerregistry.Registry(
+    "ai-infra-sprint-acr",
+    resource_group_name=resource_group.name,
+    registry_name="aiinfrasprintacr",  # must be globally unique, alphanumeric only
+    sku=containerregistry.SkuArgs(name="Basic"),
+    admin_user_enabled=True,  # simplest auth path for a solo learning sprint
+)
+
+# Grant the AKS cluster's kubelet identity pull access to this registry
+acr_pull_role = authorization.RoleAssignment(
+    "aks-acr-pull",
+    principal_id=aks_cluster.identity_profile.apply(
+        lambda profile: profile["kubeletidentity"].object_id
+    ),
+    principal_type=authorization.PrincipalType.SERVICE_PRINCIPAL,
+    role_definition_id="/subscriptions/7e21c167-fe3e-423d-b07f-106b2caf1539/providers/Microsoft.Authorization/roleDefinitions/7f951dda-4ed3-4680-a7ca-43fe172d538d",  # AcrPull built-in role
+    scope=acr.id,
+)
+
+pulumi.export("acr_login_server", acr.login_server)
+pulumi.export("acr_name", acr.name)
