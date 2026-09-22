@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tinyllama-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tinyllama-server
+  template:
+    metadata:
+      labels:
+        app: tinyllama-server
+    spec:
+      nodeSelector:
+        agentpool: userpool
+      containers:
+        - name: tinyllama-server
+          image: aiinfrasprintacr.azurecr.io/tinyllama-server:v1
+          ports:
+            - containerPort: 8000
+          resources:
+            requests:
+              cpu: "1"
+              memory: "2Gi"
+            limits:
+              cpu: "2"
+              memory: "4Gi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tinyllama-server
+spec:
+  selector:
+    app: tinyllama-server
+  ports:
+    - port: 80
+      targetPort: 8000
