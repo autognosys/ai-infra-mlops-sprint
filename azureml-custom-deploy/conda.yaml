@@ -1,0 +1,11 @@
+name: tinyllama-env
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+      - torch
+      - transformers
+      - accelerate
+      - azureml-inference-server-http
