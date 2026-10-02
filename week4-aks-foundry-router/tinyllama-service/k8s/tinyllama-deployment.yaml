@@ -16,7 +16,7 @@ spec:
         agentpool: userpool
       containers:
         - name: tinyllama-server
-          image: aiinfrasprintacr.azurecr.io/tinyllama-server:v1
+          image: <your-registry>.azurecr.io/tinyllama-server:v1
           ports:
             - containerPort: 8000
           resources:

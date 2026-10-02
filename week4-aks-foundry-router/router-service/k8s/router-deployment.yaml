@@ -16,14 +16,14 @@ spec:
         agentpool: userpool
       containers:
         - name: router-service
-          image: aiinfrasprintacr.azurecr.io/router-service:v1
+          image: <your-registry>.azurecr.io/router-service:v1
           ports:
             - containerPort: 8000
           env:
             - name: TINYLLAMA_URL
               value: "http://tinyllama-server/generate"
             - name: FOUNDRY_URL
-              value: "https://ai-infra-sprint-foundry.services.ai.azure.com/models/chat/completions?api-version=2024-05-01-preview"
+              value: "https://<your-resource>.services.ai.azure.com/models/chat/completions?api-version=2024-05-01-preview"
             - name: LENGTH_THRESHOLD
               value: "100"
             - name: FOUNDRY_API_KEY

@@ -18,7 +18,7 @@ spec:
         kubernetes.azure.com/agentpool: userpool
       containers:
         - name: inference-service
-          image: aiinfrasprintacr.azurecr.io/inference-service:v1
+          image: <your-registry>.azurecr.io/inference-service:v1
           ports:
             - containerPort: 8000
           resources:
