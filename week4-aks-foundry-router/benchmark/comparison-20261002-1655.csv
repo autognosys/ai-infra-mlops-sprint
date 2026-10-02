@@ -1,0 +1,227 @@
+target,backend,cost_usd,error,in_tok,kind,latency_s,out_tok,quality_1to5,response,run
+router,tinyllama,,,,short,19.14,,,"Exit code 137 is a common error and it indicates that a process has exited unexpectedly. In Kubernetes, it occurs when the Kubernetes API server receives a fatal error, such as a network error, and the response is sent to the client. This can happen when a pod is unable to communicate with the API server, leading to the following error message:
+
+```
+Error from server (InternalError): error when applying configuration: the server could not find the requested resource (get pods -o yaml -n my-namespace): Pod ""my-pod-f0c5c48d",1
+router,tinyllama,,,,short,8.84,,,A CrashLoopBackOff is a term used in Linux that refers to a failure of a container to restart after a container instance has crashed due to an error. It means that the container instance never gets to the point where it is ready to accept new requests or make updates.,1
+router,tinyllama,,,,short,19.24,,,"Sure, here are three Prometheus metric types:
+
+1. Counter: A Prometheus counter is a metric that counts the number of occurrences of an event. It is useful for tracking metrics like the number of requests, messages, or events that occur over a specified period.
+
+2. Gauge: Prometheus gauges are used to measure the state of an entity over a given time period. They are useful for measuring things like CPU usage, disk space, or network traffic.
+
+3. Summary: Prometheus summaries are a type of metric that aggregates multiple",1
+router,tinyllama,,,,short,19.19,,,"A liveness probe is a configuration setting that determines whether a pod is ready for use. It checks whether a pod's container has successfully started and is running. This helps to prevent the creation of a new pod that is not ready to serve traffic.
+
+A readiness probe, on the other hand, is a configuration setting that checks whether a pod is ready to take on traffic. It allows the pod to accept traffic before it is considered ready to serve. This helps to prevent the creation of a new pod that is not yet ready to serve traffic.
+
+In summary, a liveness probe checks whether",1
+router,tinyllama,,,,short,19.06,,,"One cause of high p99 latency is the bottleneck in network hardware such as routers and switches, which can slow down the processing of the network traffic. Poor network design can also contribute to high latency, as networks may be designed with insufficient bandwidth or inadequate routing protocols. Inadequate network maintenance and upkeep can also result in increased latency, as unresolved issues or inadequate troubleshooting may contribute to network congestion and slower data transfer speeds.
+
+Moreover, the use of multiple network protocols and devices on",1
+router,foundry,,,,long,3.16,,,"Here are the three most likely root causes for the OOMKilled pods in order of likelihood, along with the evidence to check for each:
+
+---
+
+### **1. Increased Memory Pressure from Model Loading (Most Likely)**
+**Root Cause:**
+The Python FastAPI service loads a model at startup, and the model's memory footprint may be close to or exceeding the **512Mi limit** when combined with runtime memory usage. With **6 replicas** (vs. 3 previously), the cluster may be hitting memory constraints, causing the OOMKiller to terminate pods. The model might also have **non-deterministic memory",1
+router,foundry,,,,long,2.32,,,"**Executive Summary:**
+A misconfigured database pool size change at 2:10 AM triggered a severe API latency spike (from 80ms to 4s) by 2:14 AM, degrading performance. The on-call team rolled back the change by 2:31 AM, restoring normal latency by 2:35 AM with no data loss. While the incident caused 12% of requests to time out, service was fully recovered within 25 minutes.",1
+router,foundry,,,,long,1.65,,,"```json
+{
+  ""service"": ""checkout-api"",
+  ""severity"": ""CRITICAL"",
+  ""action"": ""recommend rollback""
+}
+```",1
+router,foundry,,,,long,2.8,,,"Here's a PromQL query that alerts when the 5-minute error ratio of `http_requests_total` for the `api` job exceeds 2%, along with an explanation of each part:
+
+```promql
+(
+  sum(rate(http_requests_total{job=""api"", status=~""5..""}[5m]))
+by (job)
+/
+  sum(rate(http_requests_total{job=""api""}[5m]))
+by (job)
+) * 100 > 2
+```
+
+### Explanation of each part:
+
+1. **`http_requests_total{job=""api"", status=",1
+router,foundry,,,,long,14.4,,,"**Static Length-Based Routing** routes prompts to a small or large model based on a fixed token-length threshold (e.g., <1k tokens → small model). **Cost:** Low (no extra inference), but inefficient—short prompts may overuse the large model, increasing costs. **Latency:** Minimal overhead, but large-model calls add latency. **Failure Modes:** Poor accuracy if length doesn’t correlate with complexity (e.g., simple long prompts or complex short ones).
+
+**Classifier-Based Router** uses a lightweight model to predict which model to use. **Cost:** Higher (extra inference for classification), but optimizes",1
+tinyllama_aks,,,,,short,13.44,,,"In Kubernetes, exit code 137 means that a process has terminated abnormally, often due to a signal being received. For example, if a container is terminated due to a signal being received, the exit code will be 137. This exit code is used to indicate a signal being received, so it is relevant in Kubernetes for detecting when a container has terminated abnormally due to a signal.",1
+tinyllama_aks,,,,,short,10.32,,,"A CrashLoopBackOff is a Docker container error that occurs when a container fails to start due to an internal error, such as a system error, network connection error, or hardware failure. It means that the container will keep trying to restart itself, typically leading to a high number of container restarts and eventually to a crash.",1
+tinyllama_aks,,,,,short,15.59,,,"Sure! The Prometheus metric types are:
+
+1. Counter: A counter represents the number of occurrences of an event.
+
+2. Gauge: A gauge represents the value of a metric during a specific time interval.
+
+3. Histogram: A histogram represents the distribution of the metric values over a specific time interval.
+
+Note that Prometheus supports multiple metric types, and users can choose which ones they want to use based on their specific needs.",1
+tinyllama_aks,,,,,short,21.02,,,"A liveness probe and a readiness probe differ in the way they are used to determine whether a pod is healthy or not. Here's a breakdown of the differences:
+
+1. Liveness Probe:
+A liveness probe is a check performed by a container or pod to determine whether it is functioning correctly, ready to accept incoming traffic. A liveness probe checks whether a container or pod's internal state is healthy or not.
+
+2. Readiness Probe:
+A readiness probe is a check performed before a pod is scheduled to run by a deployment",1
+tinyllama_aks,,,,,short,22.31,,,"One cause of high p99 latency is a lack of network bandwidth or poor network connectivity. When the number of active requests, or p99, exceeds the available network bandwidth, the requests are queued and delayed until the bandwidth is available. This can lead to high p99 latency, as the processing of each request takes longer than the time it takes to transfer data to the server. Additionally, poor network connectivity can also cause delays, especially when multiple active requests are being processed.
+
+In contrast, high latency can also result from factors such as server overload or high",1
+tinyllama_aks,,,,,long,19.68,,,"1. CPU Usage:
+- Check if the pod has enough CPU resources.
+- Check if the pod has multiple CPU requests or limits, which could impact the model's performance.
+- Check if the pod has enough CPU resources, especially during high workload periods.
+
+2. Memory Usage:
+- Check if the pod has enough memory resources.
+- Check if the pod has multiple memory requests or limits, which could impact the model's performance.
+- Check if the pod has enough memory resources, especially during high workload periods.
+
+3. Resource Exhaustion:
+-",1
+tinyllama_aks,,,,,long,20.47,,,"At 02:10, a config change was made to the database pool, resulting in a sudden increase in API latency of 80ms. At 02:14, the API latency began to rise rapidly, reaching a peak of 4s. At 02:31, the on-call team rolled back the config change and the latency decreased by 02:35, with no data lost. Data requests time out at 12 percent of total requests.
+
+Overall, the incident showed that a sudden change resulted in a sudden spike in API",1
+tinyllama_aks,,,,,long,22.92,,,"To extract the JSON with keys 'service', 'severity', and 'action' from the alert text you provided, you can use a JSONPath query:
+
+`/service,severity,action`
+
+For example:
+
+```json
+{
+  ""service"": ""checkout-api"",
+  ""severity"": ""CRITICAL"",
+  ""action"": ""error rate 18% over 5 minutes, last deploy 14 min ago, recommend rollback""
+}
+```
+
+The resulting JSON will be:
+
+```json
+{
+",1
+tinyllama_aks,,,,,long,23.36,,,"To create a PromQL query that alerts for a 5-minute error ratio of http_requests_total for job ""api"" exceeding 2 percent, we can use the following PromQL statement:
+
+```
+response_over_time(http_requests_total[5m]) by (job)
+```
+
+The above PromQL statement is a basic PromQL query using the response_over_time() function to measure the 5-minute error ratio (i.e., the difference between the average error rate over the last 5 minutes and the average error rate over the last ",1
+tinyllama_aks,,,,,long,21.9,,,"In the world of AI chatbots, one of the most important aspects to consider is the type of routing algorithm to use. Static length-based routing, where the length of the message is used to determine the routing, is a common choice for small models. However, for larger models, a classifier-based router is more appropriate.
+
+In this article, we will compare the two routing algorithms for sending prompts to a small and large model. We will first discuss the cost and latency of each method, and then we will examine the potential failure modes of each.
+
+Cost and latency
+
+",1
+foundry_mistral,,0.000307,,15,short,6.22,200,,"In Kubernetes, **exit code 137** typically indicates that a container was **terminated by a `SIGKILL` (signal 9)**. This usually happens when:
+
+### **Common Causes of Exit Code 137 in Kubernetes**
+1. **Out of Memory (OOM) Kill**
+   - The container exceeded its memory limit (`resources.limits.memory`), and the Linux kernel's **OOM Killer** terminated it.
+   - Check the pod's events (`kubectl describe pod <pod-name>`) for `OOMKilled` messages.
+   - Example:
+     ```sh
+     kubectl describe pod my-pod | grep -i ""oom""
+     ```
+   - **Solution:**
+     - Increase the memory limit in the pod's `resources.limits`.
+     - Optimize the application's memory usage.
+     - Check for memory leaks.
+
+2. **Manual Termination (`kubectl delete pod` or `kubectl scale`)**
+  ",1
+foundry_mistral,,6.3e-05,,14,short,1.69,37,,"A **CrashLoopBackOff** occurs when a Kubernetes pod repeatedly crashes after starting, causing the system to delay restart attempts with increasing backoff intervals to avoid overwhelming the cluster.",1
+foundry_mistral,,0.000209,,10,short,3.68,136,,"Prometheus supports four primary metric types (though they are all represented as time series under the hood). Here are three of them:
+
+1. **Counter** – A cumulative metric that only increases (e.g., total requests, errors). It can be reset to zero on restart.
+2. **Gauge** – A metric that can arbitrarily go up or down (e.g., memory usage, temperature, active users).
+3. **Histogram** – Samples observations (e.g., request durations) and counts them in configurable buckets, also providing a sum of all values.
+
+*(Bonus: The fourth type is **Summary**, which calculates quantiles over a sliding time window.)*",1
+foundry_mistral,,0.000307,,15,short,4.89,200,,"In Kubernetes, **liveness** and **readiness probes** are two types of health checks used to monitor and manage containerized applications, but they serve different purposes:
+
+### **1. Liveness Probe**
+- **Purpose**: Determines if a container is **running** (alive) or has crashed.
+- **Behavior**:
+  - If the liveness probe fails, Kubernetes **restarts the container** (assuming it's stuck in a broken state).
+  - Used to detect deadlocks, infinite loops, or unresponsive applications.
+- **Example Use Case**:
+  - A web server that stops responding to requests but hasn't crashed (e.g., due to a deadlock).
+  - Kubernetes will kill and restart the container to restore service.
+- **Configuration**:
+  ```yaml
+  livenessProbe:
+    httpGet:
+      path: /healthz
+      port: 8080
+    initialDelaySeconds: 5
+    periodSeconds:",1
+foundry_mistral,,0.000307,,13,short,6.81,200,,"One common cause of **high p99 latency** (the 99th percentile latency) is **long-tail request processing**, where a small fraction of requests experience significantly higher delays than the majority. A specific cause of this is:
+
+### **Resource Contention (CPU, Memory, I/O, or Locks)**
+- **Example:** A few requests get stuck waiting for a **shared resource** (e.g., a database connection, a thread pool, or a mutex lock) while most requests complete quickly.
+- **Why it affects p99:** Since p99 measures the slowest 1% of requests, even a small number of delayed requests (e.g., due to lock contention or I/O bottlenecks) can skew the p99 metric upward, while the median (p50) remains unaffected.
+
+Other potential causes include:
+- **Garbage Collection (GC) pauses** (in JVM-based systems)
+- **Network jitter or packet loss**
+-",1
+foundry_mistral,,0.00034,,81,long,5.24,200,,"Here are the three most likely root causes for the OOMKilled pods in order of likelihood, along with the evidence to check for each:
+
+---
+
+### **1. Model Memory Growth Under Load (Most Likely)**
+**Root Cause:**
+The Python FastAPI service loads a model at startup, but the model's memory usage grows dynamically under load (e.g., due to batch processing, caching, or memory leaks in the model inference). With more replicas (6 vs. 3), the cumulative load increases, causing individual pods to exceed their 512Mi limit.
+
+**Evidence to Check:**
+- **Pod Memory Usage Over Time:**
+  Use `kubectl top pod` or metrics from Prometheus/Grafana to observe memory trends. Look for a gradual increase in memory usage after startup, especially during peak load.
+  ```sh
+  kubectl top pod <pod-name> --containers
+  ```
+- **Model Memory Profiling:**
+  Check if the model's memory",1
+foundry_mistral,,0.000214,,92,long,2.16,112,,"**Summary for Executive:**
+A misconfigured database pool size (reduced to 5) at 2:10 AM caused API latency to spike from 80ms to 4 seconds by 2:14 AM, leading to 12% of requests timing out. The on-call team rolled back the change by 2:31 AM, restoring normal latency by 2:35 AM with no data loss. The incident was contained quickly, but it impacted a subset of users during the 21-minute disruption.",1
+foundry_mistral,,7.8e-05,,51,long,1.6,35,,"```json
+{
+  ""service"": ""checkout-api"",
+  ""severity"": ""CRITICAL"",
+  ""action"": ""recommend rollback""
+}
+```",1
+foundry_mistral,,0.00032,,39,long,4.11,200,,"Here's a PromQL query that alerts when the 5-minute error ratio of `http_requests_total` for the `api` job exceeds 2%, along with an explanation of each part:
+
+```promql
+(
+  sum(rate(http_requests_total{job=""api"", status=~""5..""}[5m]))
+by (job)
+/
+  sum(rate(http_requests_total{job=""api""}[5m]))
+by (job)
+) * 100 > 2
+```
+
+### Explanation of each part:
+
+1. **`http_requests_total{job=""api"", status=~""5..""}[5m]`**
+   - Selects the `http_requests_total` metric for the `api` job where the status code starts with ""5"" (5xx errors)
+   - `[5m]` looks at a 5-minute range window
+
+2. **`rate(...)`**
+   - Calculates the per-second",1
+foundry_mistral,,0.00032,,39,long,3.81,200,,"**Static Length-Based Routing** sends prompts to a small or large model based on a fixed token-length threshold. *Cost*: Low (no extra inference), but inefficient—short prompts may overuse the large model, while long ones strain the small model. *Latency*: Minimal overhead, but the small model may struggle with complex long prompts, increasing processing time. *Failure Modes*: Poor accuracy if length doesn’t correlate with complexity; small model may fail on ""short but hard"" prompts.
+
+**Classifier-Based Routing** uses a lightweight model to predict which model to use. *Cost*: Higher (extra inference step), but more efficient long-term by optimizing model selection. *Latency*: Adds classifier latency (~10-50ms), but reduces overall latency by avoiding mismatches. *Failure Modes*: Classifier errors may route prompts suboptimally; requires training data and maintenance.
+
+**Trade-off**: Static is simpler and cheaper for predictable workloads; classifier is better",1

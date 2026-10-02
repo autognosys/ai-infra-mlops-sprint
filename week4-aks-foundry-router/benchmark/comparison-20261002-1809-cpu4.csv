@@ -1,0 +1,79 @@
+target,error,kind,latency_s,quality_1to5,response,run
+tinyllama_aks,,short,29.99,,"Exit code 137 in Kubernetes means the container's status is not running. This usually occurs when the container is stopped or has not started successfully. The exit code is usually followed by a failure message indicating the reason for the failure.
+
+To check the container's status, you can use the `kubectl` command in Kubernetes, like this:
+
+```
+kubectl get pods -o wide
+```
+
+This will return a list of all running and stopped pods in the cluster, along with their status. The `status` column will show you the container's status, which in this case will be ""Stopped"".
+
+To restart the container, you can specify the container's name in the `kubectl` command, like this:
+
+```
+kubectl restart pod-name
+```
+
+This will restart the container with the latest changes, and will return a success",1
+tinyllama_aks,,short,17.77,,"A CrashLoopBackOff is a pattern that indicates an error in the container's lifecycle, which can lead to a container crashing repeatedly until it is restarted or removed. The exact reasons for a CrashLoopBackOff can vary depending on the container and its configuration, but it typically occurs when the container cannot successfully handle repeated errors, such as a network error or an unexpected system restart. The error state is propagated to the subsequent containers in the pod, leading to a loop of failed back-to-back restarts until the container is restarted or removed.",1
+tinyllama_aks,,short,12.98,,"Sure, here are the three Prometheus metric types:
+
+1. Gauge: A metric that measures the value of a variable at a given point in time.
+
+2. Counter: A metric that tracks the number of times a particular operation has been executed.
+
+3. Histogram: A metric that measures the frequency with which a particular operation has occurred within a fixed time interval.",1
+tinyllama_aks,,short,29.84,,"A liveness probe and readiness probe are two types of probe controls that test whether a container or service is healthy and ready to accept incoming traffic.
+
+Liveness probe:
+A liveness probe is a check that verifies whether a container or service is running. When a liveness probe is triggered, it starts a sequence of health checks to check if the container or service is responding consistently. If the probe fails, the container or service is considered unhealthy and may be terminated.
+
+A typical liveness probe pattern is to wait a certain amount of time (in seconds or minutes) for a response from the container or service. If the response is not received within the specified time period, the probe fails. If the response is received, the probe waits for a certain amount of time (in seconds or minutes) and then checks whether the container or service is still running or not. If the response",1
+tinyllama_aks,,short,29.74,,"One cause of high p99 latency is a lack of processing power or processing capacity. A computer or server with limited processing power may be experiencing p99 latency due to the high number of processes running simultaneously. This can happen when there are too many tasks or applications running concurrently, which can cause delays and slow performance.
+
+In contrast, when the server has enough processing power, it can handle all the requests and processes efficiently, resulting in low p99 latency. This can be achieved by implementing a load balancing technique, such as round-robin, to distribute workload across multiple servers to minimize resource usage and improve throughput.
+
+Other reasons for high p99 latency include excessive resource usage, such as memory allocation or I/O operations, which can slow down application performance. A server with too many processes or applications running can also cause high p99 latency since they may not be able to allocate enough",1
+tinyllama_aks,,long,30.33,,"1. Resource Exhaustion:
+   - Reduced availability and reliability due to a lack of resources.
+   - May be due to a lack of memory, CPU, or disk space.
+   - Monitor resource utilization and allocate resources accordingly.
+   - Check CPU utilization with `top` or `htop`.
+   - Check disk usage with `df` or `df -h` and ensure mount points are accessible.
+
+2. Leaky Connections:
+   - The increase in replicas may have resulted in more connections being made between pods. This can lead to leaks and potential issues such as a connection refused error.
+   - Check the `kubectl logs` output for errors or leaks that could be causing connections to fail.
+   - Monitor pod health and ensure that replicas are not increasing too quickly.
+
+3. Config Errors:
+   -",1
+tinyllama_aks,,long,17.48,,"An IT team of an organization experienced increased performance and stability issues while processing data transfers to a database. At 02:10, a config change was made to the DB pool size. At 02:14, API latency rose from 80 ms to 4s. On-call rolled back the change, and latency recovered by 02:31. No data was lost, and 12 percent of requests timed out. The issue was identified and resolved by 02:35.",1
+tinyllama_aks,,long,15.65,,"Here's the extracted JSON with only the ""service"", ""severity"", and ""action"" keys:
+
+```json
+{
+    ""service"": ""checkout-api"",
+    ""severity"": ""CRITICAL"",
+    ""action"": ""recommend rollback""
+}
+```
+
+Note that the JSON value for ""action"" is a string instead of a number, which indicates that it's an action rather than an error.",1
+tinyllama_aks,,long,30.01,,"To create a PromQL query to alert when the 5-minute error ratio of http_requests_total for job api exceeds 2 percent, we can use the following PromQL query:
+
+```
+http_errors_total{job=""api"", error=/invalid/path} > 2
+```
+
+Here, we are using the `http_errors_total` metric, which counts the total number of HTTP errors that occurred during the specified time frame (in this case, the last 5 minutes), and the `error` label to filter out errors with a status code other than 400 (for example, 500 errors). We are using the `>=` operator to filter the errors count to greater than or equal to two, and we are setting a 2-percent threshold.
+
+The query is asking Prometheus to count the number of errors for the specified job (`api`), comparing it to the 2-",1
+tinyllama_aks,,long,30.01,,"Static length-based routing (SLBR) and classifier-based routing (CBR) are two routing protocols commonly used for sending prompts to a small or large model in machine learning (ML) applications. In this comparison, we will analyze the differences between these two routing protocols, including their cost, latency, and failure modes.
+
+Cost:
+The cost of SLBR is typically lower than CBR because the routing process involves fewer hops, reducing the distance traveled and the number of packets sent. Nevertheless, the latency of SLBR is also lower than that of CBR. This is because the routing process is optimized for time-sensitive tasks, and therefore, the latency is not compromised unnecessarily.
+
+Latency:
+The latency of SLBR also varies depending on the network setup and the model's computational requirements. In general, the latency of SLBR is lower than that of CBR because",1
